@@ -106,8 +106,12 @@ dist: irker-$(VERS).tar.gz irker-$(VERS).md5
 
 WEBDOCS = irkerd.html irk.html irkerhook.html install.html security.html hacking.html
 
+NEWSVERSION=$(shell sed -n <NEWS '/^[0-9]/s/:.*//p' | head -1)
+
 release: irker-$(VERS).tar.gz irker-$(VERS).md5 $(WEBDOCS)
+	@[ $(VERS) = $(NEWSVERSION) ] || { echo "Version mismatch!"; exit 1; }
 	shipper version=$(VERS) | sh -e -x
 
 refresh: $(WEBDOCS)
+	@[ $(VERS) = $(NEWSVERSION) ] || { echo "Version mismatch!"; exit 1; }
 	shipper -N -w version=$(VERS) | sh -e -x
