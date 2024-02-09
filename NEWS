@@ -1,6 +1,6 @@
 			irker history 
 
-Repository head:
+2.24: 2024-02-09::
   Allow irkerhook to cope with signed git commit.
 
 2.23: 2023-01-27
