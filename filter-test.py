@@ -31,5 +31,5 @@ else:
 
 time.sleep(1.5)	# Avoid a race condition
 
-print json.dumps(metadata)
+print(json.dumps(metadata))
 # end
