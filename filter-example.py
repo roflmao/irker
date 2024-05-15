@@ -9,5 +9,5 @@ metadata = json.loads(sys.argv[1])
 
 metadata['author'] = "The Great and Powerful Oz"
 
-print json.dumps(metadata)
+print(json.dumps(metadata))
 # end
