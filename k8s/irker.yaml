@@ -21,7 +21,7 @@ spec:
         fsGroup: 100
       containers:
         - name: irker
-          image: your-registry/irker:latest # replace with your image
+          image: ghcr.io/roflmao/irker:latest # replace with your image
           imagePullPolicy: IfNotPresent
           env:
             - name: IRKER_HOST
