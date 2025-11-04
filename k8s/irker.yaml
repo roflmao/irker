@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: irker
+  labels:
+    app: irker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: irker
+  template:
+    metadata:
+      labels:
+        app: irker
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 100
+        fsGroup: 100
+      containers:
+        - name: irker
+          image: ghcr.io/roflmao/irker:latest # replace with your image
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: IRKER_HOST
+              value: "0.0.0.0"
+            - name: IRKER_HOST6
+              value: "::"
+            - name: IRKER_LOG_LEVEL
+              value: "info"
+            - name: IRKER_LOG_FILE
+              value: "-"  # force StreamHandler to stdout/stderr
+            # Optional: set NickServ password via a Secret
+            # - name: IRKER_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: irker-secrets
+            #       key: nickserv_password
+          ports:
+            - containerPort: 6659
+              name: irker-tcp
+              protocol: TCP
+            - containerPort: 6659
+              name: irker-udp
+              protocol: UDP
+          readinessProbe:
+            tcpSocket:
+              port: irker-tcp
+            periodSeconds: 10
+            initialDelaySeconds: 3
+          livenessProbe:
+            tcpSocket:
+              port: irker-tcp
+            periodSeconds: 20
+            initialDelaySeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: irker
+  labels:
+    app: irker
+spec:
+  selector:
+    app: irker
+  ports:
+    - name: tcp
+      port: 6659
+      targetPort: irker-tcp
+      protocol: TCP
+    - name: udp
+      port: 6659
+      targetPort: irker-udp
+      protocol: UDP
+  type: ClusterIP
